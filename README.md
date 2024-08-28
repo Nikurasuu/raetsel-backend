@@ -39,7 +39,7 @@ GET /result?id=some-id
 	"result":
 	{
 		"id": 1,
-		metadata: {},
+		"metadata": {},
 		"finalWord": "word1",
 		"columns": []
 	}
