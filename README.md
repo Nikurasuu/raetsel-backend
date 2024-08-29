@@ -29,6 +29,8 @@ GET /result?id=some-id
 		"columns": []
 	}
 }
+```
+
 puzzle column:
 ```json
 {
@@ -39,6 +41,7 @@ puzzle column:
 	"wantedCharacter": 3
 }
 ```
+
 result column:
 ```json
 {
