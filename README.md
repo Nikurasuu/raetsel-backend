@@ -34,6 +34,7 @@ GET /result?id=some-id
 puzzle column:
 ```json
 {
+	"id": 1,
 	"position": 1,
 	"first": "word1",
 	"second": "word2",
