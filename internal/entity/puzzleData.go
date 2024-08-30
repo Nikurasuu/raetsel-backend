@@ -1,13 +1,12 @@
 package entity
 
 type PuzzleData struct {
-	ID          uint     `json:"id" gorm:"primaryKey"`
-	BridgeWords []string `json:"bridgeWords"`
-	Columns     []Column `json:"columns"`
+	ID          uint           `json:"id" gorm:"primaryKey"`
+	BridgeWords []string       `json:"bridgeWords"  gorm:"serializer:json"`
+	Columns     []PuzzleColumn `json:"columns"  gorm:"serializer:json"`
 }
 
-type Column struct {
-	ID              uint   `json:"id" gorm:"primaryKey"`
+type PuzzleColumn struct {
 	Position        int    `json:"position"`
 	First           string `json:"first"`
 	Second          string `json:"second"`

@@ -21,18 +21,15 @@ func NewPuzzleDataHandler(logger *logrus.Logger, gorm *gorm.DB) *PuzzleDataHandl
 	}
 }
 
-func (h *PuzzleDataHandler) PostPuzzleData(c *gin.Context) {
+func (h *PuzzleDataHandler) GetPuzzleData(c *gin.Context) {
+	id := c.Param("id")
 	var puzzleData entity.PuzzleData
-	if err := c.BindJSON(&puzzleData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+	if err := h.gorm.Where("id = ?", id).First(&puzzleData).Error; err != nil {
+		h.logger.Errorf("Error fetching puzzle data: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching puzzle data"})
 		return
 	}
 
-	h.logger.Infof("Received puzzle data: %+v", puzzleData)
-
-	// TODO: Validate the puzzle data
-
-	// TODO: Save the puzzle data to the database
-
-	c.JSON(http.StatusOK, gin.H{"status": "success"})
+	c.JSON(http.StatusOK, puzzleData)
 }
