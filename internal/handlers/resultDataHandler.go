@@ -2,32 +2,40 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/kamva/mgm/v3"
 	"github.com/nikurasuu/raetsel-backend/internal/entity"
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ResultDataHandler struct {
-	logger *logrus.Logger
-	gorm   *gorm.DB
+	logger          *logrus.Logger
+	mongoCollection *mgm.Collection
 }
 
-func NewResultDataHandler(logger *logrus.Logger, gorm *gorm.DB) *ResultDataHandler {
+func NewResultDataHandler(logger *logrus.Logger, mongoCollection *mgm.Collection) *ResultDataHandler {
 	return &ResultDataHandler{
-		logger: logger,
-		gorm:   gorm,
+		logger:          logger,
+		mongoCollection: mongoCollection,
 	}
 }
 
 func (h *ResultDataHandler) GetResultData(c *gin.Context) {
-	id := c.Param("id")
-	var resultData entity.ResultData
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		h.logger.Errorf("Invalid id parameter: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id parameter"})
+		return
+	}
 
-	if err := h.gorm.Where("id = ?", id).First(&resultData).Error; err != nil {
-		h.logger.Errorf("Error fetching result data: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching result data"})
+	var resultData entity.ResultData
+	filter := bson.M{"id": id}
+	if err := h.mongoCollection.FindOne(mgm.Ctx(), filter).Decode(&resultData); err != nil {
+		h.logger.Errorf("Error getting result data: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting result data"})
 		return
 	}
 
@@ -35,12 +43,18 @@ func (h *ResultDataHandler) GetResultData(c *gin.Context) {
 }
 
 func (h *ResultDataHandler) GetResultDataByPuzzleDataID(c *gin.Context) {
-	id := c.Param("id")
-	var resultData entity.ResultData
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		h.logger.Errorf("Invalid id parameter: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id parameter"})
+		return
+	}
 
-	if err := h.gorm.Where("puzzle_data_id = ?", id).First(&resultData).Error; err != nil {
-		h.logger.Errorf("Error fetching result data: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching result data"})
+	var resultData entity.ResultData
+	filter := bson.M{"puzzleDataId": id}
+	if err := h.mongoCollection.FindOne(mgm.Ctx(), filter).Decode(&resultData); err != nil {
+		h.logger.Errorf("Error getting result data: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting result data"})
 		return
 	}
 
