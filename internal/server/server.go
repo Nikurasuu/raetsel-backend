@@ -4,34 +4,35 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/kamva/mgm/v3"
 	"github.com/nikurasuu/raetsel-backend/internal/config"
 	"github.com/nikurasuu/raetsel-backend/internal/entity"
 	"github.com/nikurasuu/raetsel-backend/internal/handlers"
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Server struct {
 	cfg    *config.Config
 	logger *logrus.Logger
-	db     *gorm.DB
+	client *mongo.Client
 }
 
-func NewServer(cfg *config.Config, logger *logrus.Logger, db *gorm.DB) *Server {
+func NewServer(cfg *config.Config, logger *logrus.Logger) *Server {
 	return &Server{
 		cfg:    cfg,
 		logger: logger,
-		db:     db,
 	}
 }
 
 func (s *Server) Start() error {
 	r := gin.Default()
 
-	s.db.AutoMigrate(&entity.PuzzleData{}, &entity.ResultData{})
+	puzzleDataCollection := mgm.Coll(&entity.PuzzleData{})
+	resultDataCollection := mgm.Coll(&entity.ResultData{})
 
-	puzzleDataHandler := handlers.NewPuzzleDataHandler(s.logger, s.db)
-	resultDataHandler := handlers.NewResultDataHandler(s.logger, s.db)
+	puzzleDataHandler := handlers.NewPuzzleDataHandler(s.logger, puzzleDataCollection)
+	resultDataHandler := handlers.NewResultDataHandler(s.logger, resultDataCollection)
 
 	addPuzzleDataRoutes(r, puzzleDataHandler)
 	addResultDataRoutes(r, resultDataHandler)

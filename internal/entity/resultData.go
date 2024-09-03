@@ -1,13 +1,17 @@
 package entity
 
+import "github.com/kamva/mgm/v3"
+
 type ResultData struct {
-	ID           uint           `json:"id" gorm:"primaryKey"`
-	FinalWord    string         `json:"finalWord"`
-	Columns      []ResultColumn `json:"columns" gorm:"serializer:json"`
-	PuzzleDataID uint           `json:"puzzleDataId" gorm:"not null;"`
+	mgm.DefaultModel `bson:",inline"`
+	ID               uint           `json:"id" bson:"id"`
+	FinalWord        string         `json:"finalWord" bson:"finalWord"`
+	Columns          []ResultColumn `json:"columns" bson:"columns"`
+	PuzzleDataID     uint           `json:"puzzleDataId" bson:"puzzleDataId"`
 }
 
 type ResultColumn struct {
-	Position  int    `json:"position"`
-	FinalWord string `json:"finalWord"`
+	mgm.DefaultModel `bson:",inline"`
+	Position         int    `json:"position" bson:"position"`
+	FinalWord        string `json:"finalWord" bson:"finalWord"`
 }

@@ -3,13 +3,13 @@ package config
 import "github.com/spf13/viper"
 
 type Config struct {
-	Broker struct {
-		Host     string
-		Port     int
-		ClientID string
-	}
 	Server struct {
 		Port int
+	}
+	Mongo struct {
+		Host     string
+		Port     int
+		DataBase string
 	}
 }
 
