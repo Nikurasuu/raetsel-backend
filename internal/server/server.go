@@ -8,20 +8,21 @@ import (
 	"github.com/nikurasuu/raetsel-backend/internal/config"
 	"github.com/nikurasuu/raetsel-backend/internal/entity"
 	"github.com/nikurasuu/raetsel-backend/internal/handlers"
+	"github.com/nikurasuu/raetsel-backend/internal/wordlist"
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Server struct {
-	cfg    *config.Config
-	logger *logrus.Logger
-	client *mongo.Client
+	cfg      *config.Config
+	logger   *logrus.Logger
+	wordlist *wordlist.WordList
 }
 
-func NewServer(cfg *config.Config, logger *logrus.Logger) *Server {
+func NewServer(cfg *config.Config, logger *logrus.Logger, wordlist *wordlist.WordList) *Server {
 	return &Server{
-		cfg:    cfg,
-		logger: logger,
+		cfg:      cfg,
+		logger:   logger,
+		wordlist: wordlist,
 	}
 }
 
