@@ -18,20 +18,22 @@ func NewWordList(dbPath string) (*WordList, error) {
 	return &WordList{db: db}, nil
 }
 
-func (wl *WordList) WordExists(word string) (bool, error) {
-	rows, err := wl.db.Query("SELECT wort FROM words WHERE `wort` = '" + word + "'")
+func (wl *WordList) WordExists(word string) bool {
+	query := "SELECT wort FROM words WHERE LOWER(wort) = LOWER(?)"
+	rows, err := wl.db.Query(query, word)
 	if err != nil {
-		return false, err
+		return false
 	}
 	defer rows.Close()
 
-	return rows.Next(), nil
+	return rows.Next()
 }
 
-func (wl *WordList) SearchWord(word string) ([]string, error) {
-	rows, err := wl.db.Query("SELECT wort FROM words WHERE `wort` LIKE '%" + word + "%'")
+func (wl *WordList) SearchWord(word string) []string {
+	query := "SELECT wort FROM words WHERE LOWER(wort) LIKE '%' || LOWER(?) || '%'"
+	rows, err := wl.db.Query(query, word)
 	if err != nil {
-		return nil, err
+		return nil
 	}
 	defer rows.Close()
 
@@ -39,29 +41,31 @@ func (wl *WordList) SearchWord(word string) ([]string, error) {
 	for rows.Next() {
 		var result string
 		if err := rows.Scan(&result); err != nil {
-			return nil, err
+			return nil
 		}
 		results = append(results, result)
 	}
-	return results, nil
+	return results
 }
 
-func (wl *WordList) LeftWordWithBridgeWordExist(leftWord, bridgeWord string) (bool, error) {
-	rows, err := wl.db.Query("SELECT wort FROM words WHERE `wort` = '" + leftWord + bridgeWord + "'")
+func (wl *WordList) LeftWordWithBridgeWordExist(leftWord, bridgeWord string) bool {
+	query := "SELECT wort FROM words WHERE LOWER(wort) = LOWER(?)"
+	rows, err := wl.db.Query(query, leftWord+bridgeWord)
 	if err != nil {
-		return false, err
+		return false
 	}
 	defer rows.Close()
 
-	return rows.Next(), nil
+	return rows.Next()
 }
 
-func (wl *WordList) RightWordWithBridgeWordExist(rightWord, bridgeWord string) (bool, error) {
-	rows, err := wl.db.Query("SELECT wort FROM words WHERE `wort` = '" + bridgeWord + rightWord + "'")
+func (wl *WordList) RightWordWithBridgeWordExist(rightWord, bridgeWord string) bool {
+	query := "SELECT wort FROM words WHERE LOWER(wort) = LOWER(?)"
+	rows, err := wl.db.Query(query, bridgeWord+rightWord)
 	if err != nil {
-		return false, err
+		return false
 	}
 	defer rows.Close()
 
-	return rows.Next(), nil
+	return rows.Next()
 }
