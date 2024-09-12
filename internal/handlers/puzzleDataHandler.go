@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/kamva/mgm/v3"
 	"github.com/nikurasuu/raetsel-backend/internal/entity"
 	"github.com/sirupsen/logrus"
@@ -24,7 +24,8 @@ func NewPuzzleDataHandler(logger *logrus.Logger, mongoCollection *mgm.Collection
 }
 
 func (h *PuzzleDataHandler) GetPuzzleData(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	idStr := c.Param("id")
+	id, err := uuid.Parse(idStr)
 	if err != nil {
 		h.logger.Errorf("Invalid id parameter: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id parameter"})
@@ -39,4 +40,15 @@ func (h *PuzzleDataHandler) GetPuzzleData(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, puzzleData)
+}
+
+// CreatePuzzleData adds a new puzzle data to the database,
+// but it is not used in a request and instead is called
+// directly with a puzzle data struct
+func (h *PuzzleDataHandler) CreatePuzzleData(puzzleData *entity.PuzzleData) error {
+	if err := h.mongoCollection.Create(puzzleData); err != nil {
+		h.logger.Errorf("Error creating puzzle data: %v", err)
+		return err
+	}
+	return nil
 }

@@ -15,3 +15,10 @@ def searchColumn(leftWord, rightWord, wantedCharacters, bridgeWords):
                     do nothing
     return None
 ```
+
+2. Ablauf des Programms
+    1. Bild kommt an
+    2. Bild wird in PuzzleData Objekt umgewandelt
+    3. PuzzleData Objekt wird in die Datenbank eingetragen (puzzleDataHandler.CreatePuzzleData) 
+    4. ResultData Objekt wird aus PuzzleData Objekt erstellt (puzzleSolver.SolvePuzzle)
+    5. ResultData Objekt wird in die Datenbank eingetragen (resultDataHandler.CreateResultData)
