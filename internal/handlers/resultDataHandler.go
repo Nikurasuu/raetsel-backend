@@ -62,3 +62,14 @@ func (h *ResultDataHandler) GetResultDataByPuzzleDataID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resultData)
 }
+
+// CreateResultData adds a new result data to the database,
+// but it is not used in a request and instead is called
+// directly with a result data struct
+func (h *ResultDataHandler) CreateResultData(resultData *entity.ResultData) error {
+	if err := h.mongoCollection.Create(resultData); err != nil {
+		h.logger.Errorf("Error creating result data: %v", err)
+		return err
+	}
+	return nil
+}

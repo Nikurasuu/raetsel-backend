@@ -10,7 +10,7 @@ type PuzzleData struct {
 	ID               uuid.UUID      `json:"id" bson:"id"`
 	BridgeWords      []string       `json:"bridgeWords"  bson:"bridgeWords"`
 	Columns          []PuzzleColumn `json:"columns"  bson:"columns"`
-	ResultDataId     uuid.UUID      `json:"resultDataId" bson:"resultDataId"`
+	// ResultDataId     uuid.UUID      `json:"resultDataId" bson:"resultDataId"`
 }
 
 type PuzzleColumn struct {

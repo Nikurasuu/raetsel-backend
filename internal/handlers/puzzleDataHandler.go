@@ -41,3 +41,14 @@ func (h *PuzzleDataHandler) GetPuzzleData(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, puzzleData)
 }
+
+// CreatePuzzleData adds a new puzzle data to the database,
+// but it is not used in a request and instead is called
+// directly with a puzzle data struct
+func (h *PuzzleDataHandler) CreatePuzzleData(puzzleData *entity.PuzzleData) error {
+	if err := h.mongoCollection.Create(puzzleData); err != nil {
+		h.logger.Errorf("Error creating puzzle data: %v", err)
+		return err
+	}
+	return nil
+}
