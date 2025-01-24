@@ -125,8 +125,11 @@ func (p *puzzleSolver) SolvePuzzle(puzzle *entity.PuzzleData) (entity.ResultData
 			Position:  column.Position,
 			FinalWord: bridgeWord,
 		}
+		puzzle.BridgeWords = removeStringFromSlice(puzzle.BridgeWords, bridgeWord)
 		resultData.Columns = append(resultData.Columns, resultColumn)
 	}
+
+	resultData.UnknownWords = puzzle.BridgeWords
 
 	if solveErr != nil {
 		p.logger.Infof("There was an error solving the puzzle, not adding final word to result data: %s", solveErr)
@@ -138,4 +141,13 @@ func (p *puzzleSolver) SolvePuzzle(puzzle *entity.PuzzleData) (entity.ResultData
 	p.logger.Debug("SolvePuzzle took ", elapsedTime)
 	p.logger.Info("Solved puzzle with ID: ", puzzle.ID)
 	return resultData, nil
+}
+
+func removeStringFromSlice(slice []string, s string) []string {
+	for i, v := range slice {
+		if v == s {
+			return append(slice[:i], slice[i+1:]...)
+		}
+	}
+	return slice
 }

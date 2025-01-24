@@ -11,6 +11,7 @@ type ResultData struct {
 	FinalWord        string         `json:"finalWord" bson:"finalWord"`
 	Columns          []ResultColumn `json:"columns" bson:"columns"`
 	PuzzleDataID     uuid.UUID      `json:"puzzleDataId" bson:"puzzleDataId"`
+	UnknownWords     []string       `json:"unknownWords" bson:"unknownWords"`
 }
 
 type ResultColumn struct {
