@@ -92,6 +92,19 @@ func (p *puzzleSolver) solveColumnWithAPI(leftWord, rightWord string, wantedChar
 	return bridgeWord, nil
 }
 
+func (p *puzzleSolver) addFinalWordToResultData(resultData *entity.ResultData, puzzleData *entity.PuzzleData) {
+	var finalWorld string
+	for _, resultColumn := range resultData.Columns {
+		for _, puzzleColumn := range puzzleData.Columns {
+			if resultColumn.Position == puzzleColumn.Position {
+				finalWorld += string(resultColumn.FinalWord[puzzleColumn.WantedCharacter-1])
+			}
+		}
+	}
+	p.logger.Debug("Final word: ", finalWorld)
+	resultData.FinalWord = finalWorld
+}
+
 func (p *puzzleSolver) SolvePuzzle(puzzle *entity.PuzzleData) (entity.ResultData, error) {
 	startTime := time.Now()
 	p.logger.Info("Solving puzzle with ID: ", puzzle.ID)
@@ -100,9 +113,12 @@ func (p *puzzleSolver) SolvePuzzle(puzzle *entity.PuzzleData) (entity.ResultData
 	resultData.ID = uuid.New()
 	resultData.PuzzleDataID = puzzle.ID
 
+	var solveErr error
+
 	for _, column := range puzzle.Columns {
 		bridgeWord, err := p.solveColumn(column.First, column.Second, column.Space, puzzle.BridgeWords)
 		if err != nil {
+			solveErr = err
 			p.logger.Error(err)
 		}
 		resultColumn := entity.ResultColumn{
@@ -110,6 +126,12 @@ func (p *puzzleSolver) SolvePuzzle(puzzle *entity.PuzzleData) (entity.ResultData
 			FinalWord: bridgeWord,
 		}
 		resultData.Columns = append(resultData.Columns, resultColumn)
+	}
+
+	if solveErr != nil {
+		p.logger.Infof("There was an error solving the puzzle, not adding final word to result data: %s", solveErr)
+	} else {
+		p.addFinalWordToResultData(&resultData, puzzle)
 	}
 
 	elapsedTime := time.Since(startTime)
