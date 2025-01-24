@@ -71,5 +71,6 @@ func (h *ResultDataHandler) CreateResultData(resultData *entity.ResultData) erro
 		h.logger.Errorf("Error creating result data: %v", err)
 		return err
 	}
+	h.logger.Info("Added result data to database with id: ", resultData.ID)
 	return nil
 }
