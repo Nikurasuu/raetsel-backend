@@ -50,5 +50,6 @@ func (h *PuzzleDataHandler) CreatePuzzleData(puzzleData *entity.PuzzleData) erro
 		h.logger.Errorf("Error creating puzzle data: %v", err)
 		return err
 	}
+	h.logger.Info("Added puzzle data to database with id: ", puzzleData.ID)
 	return nil
 }
