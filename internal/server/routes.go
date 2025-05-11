@@ -9,6 +9,7 @@ func addPuzzleDataRoutes(r *gin.Engine, puzzleDataHandler *handlers.PuzzleDataHa
 	puzzleData := r.Group("/puzzle")
 
 	puzzleData.GET("/:id", puzzleDataHandler.GetPuzzleData)
+	puzzleData.POST("/", puzzleDataHandler.PostPuzzleData)
 }
 
 func addResultDataRoutes(r *gin.Engine, resultDataHandler *handlers.ResultDataHandler) {

@@ -14,15 +14,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type puzzleSolver struct {
+type PuzzleSolver struct {
 	logger     *logrus.Logger
 	wordlist   *wordlist.WordList
 	httpClient *http.Client
 }
 
-func NewPuzzleSolver(logger *logrus.Logger, wordlist *wordlist.WordList) *puzzleSolver {
+func NewPuzzleSolver(logger *logrus.Logger, wordlist *wordlist.WordList) *PuzzleSolver {
 	httpClient := &http.Client{}
-	return &puzzleSolver{
+	return &PuzzleSolver{
 		logger:     logger,
 		wordlist:   wordlist,
 		httpClient: httpClient,
@@ -35,7 +35,7 @@ type apiResponse struct {
 	Right  string `json:"right"`
 }
 
-func (p *puzzleSolver) solveColumn(leftWord string, rightWord string, wantedCharacters int, bridgeWords []string) (string, error) {
+func (p *PuzzleSolver) solveColumn(leftWord string, rightWord string, wantedCharacters int, bridgeWords []string) (string, error) {
 	for _, bridgeWord := range bridgeWords {
 		if len(bridgeWord) == wantedCharacters {
 			if p.wordlist.LeftWordWithBridgeWordExist(leftWord, bridgeWord) && p.wordlist.RightWordWithBridgeWordExist(rightWord, bridgeWord) {
@@ -55,7 +55,7 @@ func (p *puzzleSolver) solveColumn(leftWord string, rightWord string, wantedChar
 	return "", fmt.Errorf("no valid bridge word found for %s and %s", leftWord, rightWord)
 }
 
-func (p *puzzleSolver) solveColumnWithAPI(leftWord, rightWord string, wantedCharacters int) (string, error) {
+func (p *PuzzleSolver) solveColumnWithAPI(leftWord, rightWord string, wantedCharacters int) (string, error) {
 	url := fmt.Sprintf("https://api.kwdb.ch/api/bridge-builder/?left=%s&right=%s&chars=%d", leftWord, rightWord, wantedCharacters)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -92,7 +92,7 @@ func (p *puzzleSolver) solveColumnWithAPI(leftWord, rightWord string, wantedChar
 	return bridgeWord, nil
 }
 
-func (p *puzzleSolver) addFinalWordToResultData(resultData *entity.ResultData, puzzleData *entity.PuzzleData) {
+func (p *PuzzleSolver) addFinalWordToResultData(resultData *entity.ResultData, puzzleData *entity.PuzzleData) {
 	var finalWorld string
 	for _, resultColumn := range resultData.Columns {
 		for _, puzzleColumn := range puzzleData.Columns {
@@ -105,7 +105,7 @@ func (p *puzzleSolver) addFinalWordToResultData(resultData *entity.ResultData, p
 	resultData.FinalWord = finalWorld
 }
 
-func (p *puzzleSolver) SolvePuzzle(puzzle *entity.PuzzleData) (entity.ResultData, error) {
+func (p *PuzzleSolver) SolvePuzzle(puzzle *entity.PuzzleData) (entity.ResultData, error) {
 	startTime := time.Now()
 	p.logger.Info("Solving puzzle with ID: ", puzzle.ID)
 

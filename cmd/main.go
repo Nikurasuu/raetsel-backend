@@ -14,6 +14,7 @@ import (
 func main() {
 	cfg, _ := config.NewConfig()
 	logger := logrus.New()
+	logger.SetLevel(logrus.DebugLevel)
 
 	wordlist, wordlistErr := wordlist.NewWordList("words.db")
 	if wordlistErr != nil {

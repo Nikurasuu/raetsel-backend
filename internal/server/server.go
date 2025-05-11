@@ -8,6 +8,7 @@ import (
 	"github.com/nikurasuu/raetsel-backend/internal/config"
 	"github.com/nikurasuu/raetsel-backend/internal/entity"
 	"github.com/nikurasuu/raetsel-backend/internal/handlers"
+	puzzlesolver "github.com/nikurasuu/raetsel-backend/internal/puzzleSolver"
 	"github.com/nikurasuu/raetsel-backend/internal/wordlist"
 	"github.com/sirupsen/logrus"
 )
@@ -32,8 +33,10 @@ func (s *Server) Start() error {
 	puzzleDataCollection := mgm.Coll(&entity.PuzzleData{})
 	resultDataCollection := mgm.Coll(&entity.ResultData{})
 
-	puzzleDataHandler := handlers.NewPuzzleDataHandler(s.logger, puzzleDataCollection)
+	puzzlesolver := puzzlesolver.NewPuzzleSolver(s.logger, s.wordlist)
+
 	resultDataHandler := handlers.NewResultDataHandler(s.logger, resultDataCollection)
+	puzzleDataHandler := handlers.NewPuzzleDataHandler(s.logger, puzzleDataCollection, puzzlesolver, resultDataHandler)
 
 	addPuzzleDataRoutes(r, puzzleDataHandler)
 	addResultDataRoutes(r, resultDataHandler)
