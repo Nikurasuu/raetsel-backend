@@ -6,7 +6,14 @@ image_path = "test.png"
 image = cv2.imread(image_path)
 height, width = image.shape[:2]
 
-num_lines = 10
+left_strip = image[:, :int(width * 0.2)]
+
+left_text = pytesseract.image_to_string(left_strip, lang='deu')
+
+lines = [line.strip() for line in left_text.split('\n') if line.strip()]
+num_lines = len(lines)
+
+print(num_lines)
 
 results = []
 
